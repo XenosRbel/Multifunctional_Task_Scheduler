@@ -60,7 +60,7 @@ namespace MTS.Adapters
             var view = convertView ?? Context.LayoutInflater.Inflate(Resource.Layout.item_list_alarm, null);
 
             _textClock = view.FindViewById<TextView>(Resource.Id.text_time_alarm);
-            _textClock.Text = Convert.ToString(item.Time.TimeOfDay);
+            _textClock.Text = item.Time.ToString("HH:mm");
 
             _switchCompat = view.FindViewById<SwitchCompat>(Resource.Id.toggle_btn_alarm);
             _switchCompat.Checked = item.Checked;

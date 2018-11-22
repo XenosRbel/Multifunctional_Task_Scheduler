@@ -10,15 +10,12 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_margin="10dp">
-		<TextClock
+		<TextView
 			android:text="Large Text"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:id="@+id/text_time_alarm"
-			android:clickable="true"
-			android:format12Hour="h:mm"
-			android:format24Hour="h:mm"
 			android:layout_alignParentLeft="true" />
 		<android.support.v7.widget.SwitchCompat
 			android:layout_width="wrap_content"
