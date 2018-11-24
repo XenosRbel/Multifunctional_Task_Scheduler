@@ -1,13 +1,17 @@
 ﻿using System;
 using Android.App;
+using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using Java.Util;
 using MTS.Activity;
 using MTS.Utils;
+using Calendar = Android.Icu.Util.Calendar;
+using TimeZone = Android.Icu.Util.TimeZone;
 
 namespace MTS
 {
@@ -25,6 +29,16 @@ namespace MTS
 
             BottomNavigationView navigation = FindViewById<BottomNavigationView>(Resource.Id.navigation_menu);
             navigation.SetOnNavigationItemSelectedListener(this);
+
+            new FragmentUtil(this, this.SupportFragmentManager)
+                .CreateLoadView(Resource.Id.fragment_main_container, new SchedulerFragment());
+
+            //var notify = new NotifyAlarmBuilder(this);
+            //notify.CreateNotificationChannel();
+            //notify.ContentInfo = "Info";
+            //notify.ContentText = "Text";
+            //notify.ContentTitle = "Title";
+            //notify.Show();
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -50,7 +64,9 @@ namespace MTS
             {
                 case Resource.Id.navigation_scheduler:
                 {
-                    return true;
+                    new FragmentUtil(this, this.SupportFragmentManager)
+                        .CreateLoadView(Resource.Id.fragment_main_container, new SchedulerFragment());
+                        return true;
                 }
                 case Resource.Id.navigation_alarm:
                 {

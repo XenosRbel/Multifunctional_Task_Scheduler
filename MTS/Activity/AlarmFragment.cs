@@ -12,7 +12,9 @@ using Android.Database.Sqlite;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
+using Android.Support.V4.App;
 using Android.Support.V7.Widget;
+using Android.Text.Format;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -27,56 +29,25 @@ namespace MTS.Activity
         private View _view;
         private ListViewCompat _listView;
         private List<AlarmItem> _alarmItems;
-        private SQLiteDatabase _database;
         private AlarmAdapter _adapter;
+        private SqLiteDBUtil _sqliteDbUtil;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
-            // Create your fragment here
+            
             _alarmItems = new List<AlarmItem>();
 
             _adapter = new AlarmAdapter(this.Activity, _alarmItems);
+            
+            _sqliteDbUtil = new SqLiteDBUtil(this.Activity);
 
-            var path1 = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            //"/storage/emulated/0Android/dataMTS"
-            var path = Android.OS.Environment.ExternalStorageDirectory.Path +
-                       $"/Android/data/{Resources.GetString(Resource.String.app_name)}.{Resources.GetString(Resource.String.app_name)}/files/";
-            var filePath = Path.Combine(path, "MTS.db");
-
-            _database = SQLiteDatabase.OpenOrCreateDatabase(filePath, null);//getBaseContext().openOrCreateDatabase("app.db", MODE_PRIVATE, null);
-            _database.ExecSQL("CREATE TABLE IF NOT EXISTS Alarms (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, alarmTime TEXT, alarmStatus INTEGER);");
             LoadData();
-            //_database.Close();
-            //db.ExecSQL("INSERT INTO users VALUES ('Tom Smith', 23);");
-            ////db.ExecSQL("INSERT INTO users VALUES ('John Dow', 31);");
-            //var query = db.RawQuery("SELECT * FROM users;", null);
-            //if (query.MoveToFirst())
-            //{
-
-            //    String name = query.GetString(0);
-            //    int age = query.GetInt(1);
-            //}
         }
 
         private void LoadData()
         {
-            var query = _database.RawQuery("SELECT * FROM Alarms;", null);
-            if (query.MoveToFirst())
-            {
-                do
-                {
-                    _alarmItems.Add(new AlarmItem()
-                    {
-                        Checked = Convert.ToBoolean(query.GetInt(2)),
-                        Time = Convert.ToDateTime(query.GetString(1)),
-                        Id = Convert.ToInt32(query.GetInt(0))
-                    });
-                }
-                while (query.MoveToNext());
-            }
-            query.Close();
+            _sqliteDbUtil.GetAlarmItems(ref _alarmItems);
 
             _adapter.NotifyDataSetChanged();
         }
@@ -97,21 +68,42 @@ namespace MTS.Activity
 
         private void FabOnClick(object sender, EventArgs eventArgs)
         {
-            View view = (View)sender;
+            var selectedTime = new DateTime();
 
-            ContentValues values = new ContentValues();
-            values.Put("alarmTime", DateTime.Now.ToString());
-            values.Put("alarmStatus", Convert.ToInt32(true));
-            _database.Insert("Alarms", null, values);
-
-            _alarmItems.Add(new AlarmItem()
+            var frag = DatePickerFragment.NewInstance(delegate (DateTime date)
             {
-                Checked = true,
-                Time = DateTime.Now,
-                Id = _alarmItems.Count
+                var output = new DateTime(date.Year, date.Month, date.Day,
+                    selectedTime.Hour, selectedTime.Minute, selectedTime.Second);
+
+                ContentValues values = new ContentValues();
+                values.Put("alarmTime", output.ToString());
+                values.Put("alarmStatus", Convert.ToInt32(false));
+                values.Put("nameAlarm", "Без названия");
+                
+                _sqliteDbUtil.InsertRowAlarms(values);
+
+                _alarmItems.Add(new AlarmItem()
+                {
+                    Checked = false,
+                    Time = output,
+                    Id = _alarmItems.Count,
+                    NameAlarm = "Без названия"
+                });
+                _adapter.NotifyDataSetChanged();
+
+                var alarm = new AlarmReceiver();
+                alarm.SetOnetimeTimer(this.Activity, output);
             });
 
-            _adapter.NotifyDataSetChanged();
+            var timePicker = TimePickerFragment.NewInstance(delegate (DateTime time)
+            {
+                selectedTime = time;
+
+                frag.Show(this.FragmentManager, DatePickerFragment.TAG);
+            });
+
+            timePicker.Show(this.FragmentManager, TimePickerFragment.TAG);
+      
             //Snackbar.Make(view, "Replace with your own action", Snackbar.LengthLong)
             //.SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
         }
