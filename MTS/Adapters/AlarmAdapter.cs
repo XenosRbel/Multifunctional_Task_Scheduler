@@ -8,12 +8,17 @@ using Android.App;
 using Android.Content;
 using Android.Content.Res;
 using Android.Database.Sqlite;
+using Android.Media;
 using Android.OS;
+using Android.Preferences;
+using Android.Provider;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using Java.Util;
+using MTS.Activity;
 using MTS.Entity;
 using MTS.Utils;
 
@@ -23,11 +28,13 @@ namespace MTS.Adapters
     {
         private Android.App.Activity _context;
         private List<AlarmItem> _items;
-        private TextView _textClock, _textView;
-        private ImageButton _imageButton;
+        private TextView _textClock, _textView, _textRingtone;
+        private ImageButton _imageButton, _btnSave;
         private SwitchCompat _switchCompat;
         private TextInputEditText _inputEditText;
-        private SqLiteDBUtil _sqliteDbUtil;
+        private SqLiteDBUtil _sqLiteDbUtil;
+        private CheckBox[] _daysCheckboxes;
+        private ArrayList _alarmDays;
 
         public override int Count => Items.Count;
         public Android.App.Activity Context { get => _context; set => _context = value; }
@@ -37,7 +44,7 @@ namespace MTS.Adapters
         {
             this.Context = context;
 
-            _sqliteDbUtil = new SqLiteDBUtil(this.Context);
+            _sqLiteDbUtil = new SqLiteDBUtil(this.Context);
         }
 
         public AlarmAdapter(Android.App.Activity context, List<AlarmItem> items)
@@ -45,7 +52,8 @@ namespace MTS.Adapters
             Context = context;
             Items = items;
 
-            _sqliteDbUtil = new SqLiteDBUtil(this.Context);
+            _sqLiteDbUtil = new SqLiteDBUtil(this.Context);
+            _alarmDays = new ArrayList();
         }
 
         public override AlarmItem this[int position] => Items[position];
@@ -68,6 +76,7 @@ namespace MTS.Adapters
 
             _textClock = view.FindViewById<TextView>(Resource.Id.text_time_alarm);
             _textClock.Text = item.Time.ToString("HH:mm");
+            _textClock.Tag = item.Id;
 
             _inputEditText = view.FindViewById<TextInputEditText>(Resource.Id.text_input_name_alarm);
             _inputEditText.Text = item.NameAlarm;
@@ -86,7 +95,117 @@ namespace MTS.Adapters
             _imageButton.Tag = item.Id;
             _imageButton.Click += _imageButton_Click;
 
+            _btnSave = view.FindViewById<ImageButton>(Resource.Id.btn_save_alarm);
+            _btnSave.Tag = item.Id;
+            _btnSave.Click += _btnSave_Click;
+
+            _textRingtone = view.FindViewById<TextView>(Resource.Id.text_choice_ringtone);
+            _textRingtone.Tag = item.Id;
+            _textRingtone.Click += _textRingtone_Click;
+            if (item.RingtoneUri !=null)
+            {
+                _textRingtone.Text = null;
+
+                var uriData = item.RingtoneUri.Split(' ');
+                for (int i = 1; i < uriData.Length; i++)
+                {
+                    _textRingtone.Text += uriData[i] + " ";
+                }
+            }
+
+            _daysCheckboxes = new CheckBox[7];
+            _daysCheckboxes[0] = view.FindViewById<CheckBox>(Resource.Id.checkBox_mon);
+            _daysCheckboxes[1] = view.FindViewById<CheckBox>(Resource.Id.checkBox_tue);
+            _daysCheckboxes[2] = view.FindViewById<CheckBox>(Resource.Id.checkBox_wed);
+            _daysCheckboxes[3] = view.FindViewById<CheckBox>(Resource.Id.checkBox_thu);
+            _daysCheckboxes[4] = view.FindViewById<CheckBox>(Resource.Id.checkBox_fri);
+            _daysCheckboxes[5] = view.FindViewById<CheckBox>(Resource.Id.checkBox_sat);
+            _daysCheckboxes[6] = view.FindViewById<CheckBox>(Resource.Id.checkBox_sun);
+
+            for (int i = 0; i < _daysCheckboxes.Length; i++)
+            {
+                _daysCheckboxes[i].CheckedChange += OnCheckedChange;
+                _daysCheckboxes[i].Tag = (i + 1);
+            }
+
+            if (item.DaysAlarm != null)
+            {
+                var days = item.DaysAlarm.Split(' ');
+                for (int i = 0; i < days.Length - 1; i++)
+                {
+                    var checkBoxIndex = Convert.ToInt32(days[i]) - 2;
+
+                    _daysCheckboxes[checkBoxIndex].Checked = true;
+                }
+            }
+         
             return view;
+        }
+
+        private void OnCheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            var day = (CheckBox) sender;
+
+            _alarmDays.Add(Convert.ToInt32(day.Tag) + 1);
+        }
+
+        private void _btnSave_Click(object sender, EventArgs e)
+        {
+            var button = (ImageButton) sender;
+            var id = Convert.ToInt32(button.Tag);
+
+            var item = new AlarmItem();
+            foreach (var t in Items)
+            {
+                if (t.Id == id)
+                {
+                    item = t;
+                }
+            }
+
+            Intent intent = new Intent(AlarmClock.ActionSetAlarm);
+            intent.PutExtra(AlarmClock.ExtraSkipUi, true);
+            intent.PutExtra(AlarmClock.ExtraHour, item.Time.Hour);
+            intent.PutExtra(AlarmClock.ExtraMinutes, item.Time.Minute);
+            intent.PutExtra(AlarmClock.ExtraDays, _alarmDays);
+            intent.PutExtra(AlarmClock.ExtraMessage, item.NameAlarm);
+            Context.StartActivity(intent);
+
+            
+            var days = "";
+            for (int i = 0; i < _alarmDays.Size(); i++)
+            {
+                days += _alarmDays.Get(i).ToString() + " ";
+            }
+
+            ContentValues values = new ContentValues();
+            values.Put("daysAlarm", days);
+
+            foreach (var itemL in Items)
+            {
+                if (itemL.Id.ToString() != id.ToString()) continue;
+                itemL.DaysAlarm = days;
+            }
+
+            _sqLiteDbUtil.UpdateRowAlarms(values, id.ToString());
+        }
+
+        private void _textRingtone_Click(object sender, EventArgs e)
+        {
+            var text = (TextView) sender;
+
+            Intent intent = new Intent(RingtoneManager.ActionRingtonePicker);
+            intent.PutExtra(RingtoneManager.ExtraRingtoneTitle, "Выберите рингтон:");
+            intent.PutExtra(RingtoneManager.ExtraRingtoneShowSilent, false);
+            intent.PutExtra(RingtoneManager.ExtraRingtoneShowDefault, true);
+            intent.PutExtra(RingtoneManager.ExtraRingtoneType, (int)RingtoneType.All);
+
+            var mSharedPrefs = PreferenceManager.GetDefaultSharedPreferences(this._context);
+            var mPrefsEditor = mSharedPrefs.Edit();
+            mPrefsEditor.PutInt("ITEM_ID", Convert.ToInt32(text.Tag));
+            mPrefsEditor.Commit();
+
+            _context.StartActivityForResult(intent, 111);
         }
 
         private void _inputEditText_AfterTextChanged(object sender, Android.Text.AfterTextChangedEventArgs e)
@@ -96,7 +215,7 @@ namespace MTS.Adapters
             ContentValues values = new ContentValues();
             values.Put("nameAlarm", inputText.Text);
 
-            _sqliteDbUtil.UpdateRowAlarms(values, inputText.Tag.ToString());
+            _sqLiteDbUtil.UpdateRowAlarms(values, inputText.Tag.ToString());
 
             foreach (var item in Items)
             {
@@ -109,7 +228,7 @@ namespace MTS.Adapters
         {
             var button = (ImageButton) sender;
             
-            _sqliteDbUtil.DeleteRowAlarms(button.Tag.ToString());
+            _sqLiteDbUtil.DeleteRowAlarms(button.Tag.ToString());
 
             for (int i = 0; i < Items.Count; i++)
             {
@@ -127,7 +246,7 @@ namespace MTS.Adapters
             ContentValues values = new ContentValues();
             values.Put("alarmStatus", Convert.ToInt32(switchCompat.Checked));
 
-            _sqliteDbUtil.UpdateRowAlarms(values, switchCompat.Tag.ToString());
+            _sqLiteDbUtil.UpdateRowAlarms(values, switchCompat.Tag.ToString());
 
             foreach (var item in Items)
             {

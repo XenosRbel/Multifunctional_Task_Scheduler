@@ -5,4 +5,11 @@
   <string name="title_alarm">Будильник</string>
   <string name="title_scheduler">Планы</string>
   <string name="title_exit">Выход</string>
+  <string name="choice_ringrone">Выберите рингтон</string>
+
+  <integer name="com_vk_sdk_AppId">6762064</integer>
+  <string name="vk_data_theme">vk6762064</string>
+  <string name="vk_auth_success">Пользователь прошел авторизацию</string>
+  <string name="vk_auth_dismiss">Пользователь не прошел авторизацию</string>
+  <string name="vk_auth_repeat">Повторить авторизацию</string>
 </resources>

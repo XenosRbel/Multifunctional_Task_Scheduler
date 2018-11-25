@@ -23,6 +23,11 @@
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
+    <AndroidKeyStore>true</AndroidKeyStore>
+    <AndroidSigningKeyStore>D:\Program Files\CloudStation\Programming\Keys\BitcoinMinerClick.keystore</AndroidSigningKeyStore>
+    <AndroidSigningStorePass>pavel9684997</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>pirond</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>9684997</AndroidSigningKeyPass>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -61,7 +66,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activity\AlarmFragment.cs" />
+    <Compile Include="Activity\AuthNewsFeedRepeatFragment.cs" />
     <Compile Include="Activity\DatePickerFragment.cs" />
+    <Compile Include="Activity\NewsFeedFragment.cs" />
     <Compile Include="Activity\SchedulerFragment.cs" />
     <Compile Include="Activity\SchedulerNewItemFragment.cs" />
     <Compile Include="Activity\TimePickerFragment.cs" />
@@ -168,6 +175,22 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\item_list_scheduler.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\baseline_notifications_active_24px.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\baseline_check_circle_24px.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_newsfeed.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\fragment_newsfeed_dismiss.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

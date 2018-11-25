@@ -17,6 +17,7 @@ using Android.Widget;
 using MTS.Adapters;
 using MTS.Entity;
 using MTS.Utils;
+using VKontakte;
 
 namespace MTS.Activity
 {
@@ -40,6 +41,37 @@ namespace MTS.Activity
             _sqliteDbUtil = new SqLiteDBUtil(this.Activity);
 
             LoadData();
+        }
+
+        private bool isResumed = false;
+        private static string[] MyScopes = {
+            VKScope.Friends,
+            VKScope.Wall,
+            VKScope.Photos,
+            VKScope.Nohttps,
+            VKScope.Messages,
+            VKScope.Docs
+        };
+
+        //E3OUxV0GcCYlf7ZRHhdi key
+        //03c556bf03c556bf03c556bf0d03a278ef003c503c556bf583ce220941fc1ef91be73e2 serv key
+        //6762064 
+        private void ShowLogout()
+        {
+            this.Activity.SupportFragmentManager
+                .BeginTransaction()
+                //.Replace(Resource.Id.container, new LogoutFragment())
+                .CommitAllowingStateLoss();
+        }
+
+        private void ShowLogin()
+        {
+            this.Activity.SupportFragmentManager
+                .BeginTransaction()
+                //.Replace(Resource.Id.container, new LoginFragment())
+                .CommitAllowingStateLoss();
+            VKSdk.Login(Activity, MyScopes);
+            
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

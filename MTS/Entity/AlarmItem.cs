@@ -29,5 +29,7 @@ namespace MTS.Entity
         public bool Checked { get; set; }
         public int Id { set; get; }
         public string NameAlarm { set; get; }
+        public string DaysAlarm { set; get; }
+        public string RingtoneUri { set; get;}
     }
 }

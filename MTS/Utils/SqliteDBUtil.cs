@@ -47,7 +47,9 @@ namespace MTS.Utils
                               "Alarms (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                               "alarmTime TEXT, " +
                               "alarmStatus INTEGER, " +
-                              "nameAlarm TEXT);");
+                              "nameAlarm TEXT," +
+                              "daysAlarm TEXT," +
+                              "ringtoneUri TEXT);");
 
             return this;
         }
@@ -103,7 +105,9 @@ namespace MTS.Utils
                         Checked = Convert.ToBoolean(query.GetInt(2)),
                         Time = Convert.ToDateTime(query.GetString(1)),
                         Id = Convert.ToInt32(query.GetInt(0)),
-                        NameAlarm = Convert.ToString(query.GetString(3))
+                        NameAlarm = Convert.ToString(query.GetString(3)),
+                        DaysAlarm = Convert.ToString(query.GetString(4)),
+                        RingtoneUri = Convert.ToString(query.GetString(5))
                     });
                 }
                 while (query.MoveToNext());

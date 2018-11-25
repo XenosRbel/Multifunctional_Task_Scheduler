@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -15,7 +14,6 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Java.Util;
-using Calendar = Java.Util.Calendar;
 using TimeZone = Java.Util.TimeZone;
 
 namespace MTS.Utils
@@ -23,23 +21,22 @@ namespace MTS.Utils
     [BroadcastReceiver]
     public class AlarmReceiver : BroadcastReceiver
     {
-        public static String ONE_TIME = "onetime";
-
         public override void OnReceive(Context context, Intent intent)
         {
             PowerManager pm = (PowerManager)context.GetSystemService(Context.PowerService);
             PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.Partial, "MTS.MTS");
-
             //Acquire the lock
             wl.Acquire();
-     
+
             var notify = new NotifyAlarmBuilder(context);
             notify.CreateNotificationChannel();
-            notify.ContentText = "Alarm Receiver";
-            notify.ContentTitle = "Time is Over";
+            notify.ContentInfo = "Info";
+            notify.ContentText = "Text";
+            notify.ContentTitle = "Title";
             notify.Show();
 
             //Release the lock
+            System.Diagnostics.Debug.Print("DDbug " + DateTime.Now);
             wl.Release();
         }
 
@@ -50,18 +47,28 @@ namespace MTS.Utils
             AlarmManager alarmManager = (AlarmManager)context.GetSystemService(Context.AlarmService);
             alarmManager.Cancel(sender);
         }
-
-        public void SetOnetimeTimer(Context context, DateTime date)
+        public void setOnetimeTimer(Context context)
         {
             AlarmManager am = (AlarmManager)context.GetSystemService(Context.AlarmService);
             Intent intent = new Intent(context, typeof(AlarmReceiver));
-            intent.PutExtra(ONE_TIME, true);
 
-            PendingIntent pi = PendingIntent.GetBroadcast(context, 0, intent, 0);
-            
-            am.Set(AlarmType.RtcWakeup, date.Millisecond, pi);
+            var date = DateTime.Now;
+            date = date.AddMinutes(1);
 
-            Toast.MakeText(context, date.ToString(CultureInfo.InvariantCulture), ToastLength.Long).Show();
+            var cal = Calendar.GetInstance(TimeZone.Default);
+            cal.Set(date.Year, date.Month, date.Day, date.Hour, date.Minute);
+
+            PendingIntent pi = PendingIntent.GetBroadcast(context, 1, intent, PendingIntentFlags.CancelCurrent);
+     
+            long time = date.Minute * 600000;
+            am.Set(AlarmType.RtcWakeup, cal.TimeInMillis, pi);
+        }
+        private static readonly DateTime Jan1st1970 = new DateTime
+            (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        public static long CurrentTimeMillis()
+        {
+            return (long)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
         }
     }
 }

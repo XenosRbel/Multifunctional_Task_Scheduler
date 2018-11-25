@@ -30,16 +30,80 @@
 			android:id="@+id/toggle_btn_alarm"
 			android:layout_alignParentRight="true"/>
 	</RelativeLayout>
-	<Spinner
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/spinner_sound_alarm" />
+		android:id="@+id/linearLayout1"
+		android:layout_margin="10dp">
+		<CheckBox
+			android:text="П"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:id="@+id/checkBox_mon" />
+		<CheckBox
+			android:text="В"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:id="@+id/checkBox_tue" />
+		<CheckBox
+			android:text="С"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:id="@+id/checkBox_wed" />
+		<CheckBox
+			android:text="Ч"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:id="@+id/checkBox_thu" />
+		<CheckBox
+			android:text="П"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:id="@+id/checkBox_fri" />
+		<CheckBox
+			android:text="С"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:id="@+id/checkBox_sat" />
+		<CheckBox
+			android:text="В"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:id="@+id/checkBox_sun" />
+	</LinearLayout>
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/linearLayout2"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="10dp">
+		<ImageView
+			android:src="@drawable/baseline_notifications_active_24px"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent" />
+		<TextView
+			android:text="@string/choice_ringrone"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_centerHorizontal="false"
+			android:layout_centerInParent="true"
+			android:id="@+id/text_choice_ringtone"
+			android:layout_marginLeft="10dp" />
+	</LinearLayout>
 	<RelativeLayout
 		android:minWidth="25px"
 		android:minHeight="25px"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/relativeLayout1">
+		android:id="@+id/relativeLayout1"
+		android:layout_marginBottom="10dp">
 		<ImageButton
 			android:src="@drawable/baseline_delete_forever_24px"
 			android:layout_width="wrap_content"
@@ -57,6 +121,12 @@
 			android:layout_marginLeft="10dp"
 			android:layout_centerHorizontal="false"
 			android:layout_centerInParent="true" />
+		<ImageButton
+			android:src="@drawable/baseline_check_circle_24px"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@id/btn_delete_alarm"
+			android:id="@+id/btn_save_alarm" />
 	</RelativeLayout>
 
 </LinearLayout>

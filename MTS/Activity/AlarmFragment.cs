@@ -9,6 +9,7 @@ using Android.App;
 using Android.Content;
 using Android.Database;
 using Android.Database.Sqlite;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
@@ -79,6 +80,7 @@ namespace MTS.Activity
                 values.Put("alarmTime", output.ToString());
                 values.Put("alarmStatus", Convert.ToInt32(false));
                 values.Put("nameAlarm", "Без названия");
+                values.Put("daysAlarm", "");
                 
                 _sqliteDbUtil.InsertRowAlarms(values);
 
@@ -87,12 +89,11 @@ namespace MTS.Activity
                     Checked = false,
                     Time = output,
                     Id = _alarmItems.Count,
-                    NameAlarm = "Без названия"
+                    NameAlarm = "Без названия",
+                    DaysAlarm = ""
                 });
-                _adapter.NotifyDataSetChanged();
 
-                var alarm = new AlarmReceiver();
-                alarm.SetOnetimeTimer(this.Activity, output);
+                _adapter.NotifyDataSetChanged();
             });
 
             var timePicker = TimePickerFragment.NewInstance(delegate (DateTime time)
@@ -107,7 +108,7 @@ namespace MTS.Activity
             //Snackbar.Make(view, "Replace with your own action", Snackbar.LengthLong)
             //.SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
         }
-
+        
         private async void SetDataToAdapter()
         {
             await Task.Run((() =>
