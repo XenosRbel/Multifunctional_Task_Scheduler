@@ -59,7 +59,9 @@ namespace MTS.Utils
             Database.ExecSQL("CREATE TABLE IF NOT EXISTS " +
                               "Scheduler (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                               "schedulerTitle TEXT, " +
-                              "schedulerText TEXT);");
+                              "SchedulerDescription TEXT," +
+                              "Time TEXT," +
+                              "RingtoneUri TEXT);");
             return this;
         }
 
@@ -112,7 +114,15 @@ namespace MTS.Utils
 
         public void UpdateRowScheduler(ContentValues values, string idRow)
         {
-            Database.Update("Scheduler", values, $"id = {idRow}", null);
+            try
+            {
+                Database.Update("Scheduler", values, $"id = {idRow}", null);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Database = SQLiteDatabase.OpenOrCreateDatabase(GetPathDB(), null);
+            }
         }
 
         public void DeleteRowScheduler(string idRow)
@@ -159,12 +169,14 @@ namespace MTS.Utils
                 {
                     do
                     {
-                        //data.Add(new SchedulerItem()
-                        //{
-                        //    Checked = Convert.ToBoolean(query.GetInt(2)),
-                        //    Time = Convert.ToDateTime(query.GetString(1)),
-                        //    Id = Convert.ToInt32(query.GetInt(0))
-                        //});
+                        data.Add(new SchedulerItem()
+                        {
+                            Id = Convert.ToInt32(query.GetInt(0)),
+                            SchedulerTitle = Convert.ToString(query.GetString(1)),
+                            SchedulerDescription = Convert.ToString(query.GetString(2)),
+                            Time = Convert.ToDateTime(query.GetString(3)),
+                            RingtoneUri = Convert.ToString(query.GetString(4))
+                        });
                     }
                     while (query.MoveToNext());
                 }
@@ -173,6 +185,7 @@ namespace MTS.Utils
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                Database = SQLiteDatabase.OpenOrCreateDatabase(GetPathDB(), null);
             }
         }
 

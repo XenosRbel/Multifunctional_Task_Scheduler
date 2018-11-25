@@ -75,23 +75,24 @@ namespace MTS.Activity
             {
                 selectedTime = time;
 
+                var id = DateTime.Now.ToString().GetHashCode();
+                _alarmItems.Add(new AlarmItem()
+                {
+                    Checked = false,
+                    Time = selectedTime,
+                    Id = id,
+                    NameAlarm = "Без названия",
+                    DaysAlarm = ""
+                });
+
                 ContentValues values = new ContentValues();
+                values.Put("id", id.ToString());
                 values.Put("alarmTime", selectedTime.ToString());
                 values.Put("alarmStatus", Convert.ToInt32(false));
                 values.Put("nameAlarm", "Без названия");
                 values.Put("daysAlarm", "");
 
                 _sqliteDbUtil.InsertRowAlarms(values);
-
-                _alarmItems.Add(new AlarmItem()
-                {
-                    Checked = false,
-                    Time = selectedTime,
-                    Id = _alarmItems.Count,
-                    NameAlarm = "Без названия",
-                    DaysAlarm = ""
-                });
-
                 _adapter.NotifyDataSetChanged();
             });
 

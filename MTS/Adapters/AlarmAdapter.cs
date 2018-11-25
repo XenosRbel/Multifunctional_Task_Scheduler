@@ -21,6 +21,7 @@ using Java.Util;
 using MTS.Activity;
 using MTS.Entity;
 using MTS.Utils;
+using Uri = Android.Net.Uri;
 
 namespace MTS.Adapters
 {
@@ -170,6 +171,10 @@ namespace MTS.Adapters
             intent.PutExtra(AlarmClock.ExtraMinutes, item.Time.Minute);
             intent.PutExtra(AlarmClock.ExtraDays, _alarmDays);
             intent.PutExtra(AlarmClock.ExtraMessage, item.NameAlarm);
+            if (item.RingtoneUri != null)
+            {
+                intent.PutExtra(AlarmClock.ValueRingtoneSilent, Uri.Parse(item.RingtoneUri.Split(' ').ToArray()[0]));
+            }
             Context.StartActivity(intent);
 
             
@@ -201,8 +206,6 @@ namespace MTS.Adapters
             }
 
             this.NotifyDataSetChanged();
-            
-            _sqLiteDbUtil.Database.Close();
         }
 
         private void _textRingtone_Click(object sender, EventArgs e)
@@ -213,7 +216,7 @@ namespace MTS.Adapters
             intent.PutExtra(RingtoneManager.ExtraRingtoneTitle, "Выберите рингтон:");
             intent.PutExtra(RingtoneManager.ExtraRingtoneShowSilent, false);
             intent.PutExtra(RingtoneManager.ExtraRingtoneShowDefault, true);
-            intent.PutExtra(RingtoneManager.ExtraRingtoneType, (int)RingtoneType.All);
+            intent.PutExtra(RingtoneManager.ExtraRingtoneType, (int)RingtoneType.Alarm);
 
             var mSharedPrefs = PreferenceManager.GetDefaultSharedPreferences(this._context);
             var mPrefsEditor = mSharedPrefs.Edit();
@@ -221,8 +224,6 @@ namespace MTS.Adapters
             mPrefsEditor.Commit();
 
             _context.StartActivityForResult(intent, 111);
-            
-            _sqLiteDbUtil.Database.Close();
         }
 
         private void _inputEditText_AfterTextChanged(object sender, Android.Text.AfterTextChangedEventArgs e)
@@ -241,8 +242,6 @@ namespace MTS.Adapters
             }
 
             this.NotifyDataSetChanged();
-
-            _sqLiteDbUtil.Database.Close();
         }
 
         private void _imageButton_Click(object sender, EventArgs e)
@@ -262,8 +261,6 @@ namespace MTS.Adapters
             Intent intent = new Intent(AlarmClock.ActionDismissAlarm);
             intent.PutExtra(AlarmClock.ExtraAlarmSearchMode, AlarmClock.AlarmSearchModeLabel);
             Context.StartActivity(intent);
-
-            _sqLiteDbUtil.Database.Close();
         }
 
         private void _switchCompat_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
@@ -282,8 +279,6 @@ namespace MTS.Adapters
             }
 
             this.NotifyDataSetChanged();
-            
-            _sqLiteDbUtil.Database.Close();
         }
 
         ~AlarmAdapter()

@@ -42,8 +42,8 @@ namespace MTS
             BottomNavigationView navigation = FindViewById<BottomNavigationView>(Resource.Id.navigation_menu);
             navigation.SetOnNavigationItemSelectedListener(this);
 
-            //new FragmentUtil(this, this.SupportFragmentManager)
-                //.CreateLoadView(Resource.Id.fragment_main_container, new SchedulerFragment());
+            new FragmentUtil(this, this.SupportFragmentManager)
+                .CreateLoadView(Resource.Id.fragment_main_container, new SchedulerFragment());
 
             //var notify = new NotifyAlarmBuilder(this);
             //notify.CreateNotificationChannel();
@@ -96,8 +96,25 @@ namespace MTS
                     var idRow = mSharedPref.GetInt("ITEM_ID", 0);
 
                     sqLiteDbUtil.UpdateRowAlarms(values, idRow.ToString());
+                }
+            }
 
-                    sqLiteDbUtil.Database.Close();
+            if (requestCode == 1111 && resultCode == Result.Ok)
+            {
+                var uri = (Android.Net.Uri)data.GetParcelableExtra(RingtoneManager.ExtraRingtonePickedUri);
+                if (uri != null)
+                {
+                    var ringTonePath = uri.Path;
+                    var ringtone = RingtoneManager.GetRingtone(this, uri);
+                    var title = ringtone.GetTitle(this);
+
+                    var values = new ContentValues();
+                    values.Put("RingtoneUri", ringTonePath + " " + title);
+                    var sqLiteDbUtil = new SqLiteDBUtil(this);
+                    var mSharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+                    var idRow = mSharedPref.GetInt("ITEM_ID", 0);
+
+                    sqLiteDbUtil.UpdateRowScheduler(values, idRow.ToString());
                 }
             }
 

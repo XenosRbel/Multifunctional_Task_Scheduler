@@ -76,12 +76,12 @@
     <Compile Include="Adapters\SchedulerAdapter.cs" />
     <Compile Include="Entity\AlarmItem.cs" />
     <Compile Include="Entity\SchedulerItem.cs" />
-    <Compile Include="Utils\AlarmReceiver.cs" />
     <Compile Include="Utils\FragmentUtil.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\NotifyAlarmBuilder.cs" />
+    <Compile Include="Utils\SchedulerReceiver.cs" />
     <Compile Include="Utils\SqliteDBUtil.cs" />
   </ItemGroup>
   <ItemGroup>

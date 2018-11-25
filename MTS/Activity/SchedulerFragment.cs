@@ -36,42 +36,11 @@ namespace MTS.Activity
 
             _schedulerItems = new List<SchedulerItem>();
 
-            _adapter = new SchedulerAdapter(this.Activity);
+            _adapter = new SchedulerAdapter(this.Activity, _schedulerItems);
 
             _sqliteDbUtil = new SqLiteDBUtil(this.Activity);
 
             LoadData();
-        }
-
-        private bool isResumed = false;
-        private static string[] MyScopes = {
-            VKScope.Friends,
-            VKScope.Wall,
-            VKScope.Photos,
-            VKScope.Nohttps,
-            VKScope.Messages,
-            VKScope.Docs
-        };
-
-        //E3OUxV0GcCYlf7ZRHhdi key
-        //03c556bf03c556bf03c556bf0d03a278ef003c503c556bf583ce220941fc1ef91be73e2 serv key
-        //6762064 
-        private void ShowLogout()
-        {
-            this.Activity.SupportFragmentManager
-                .BeginTransaction()
-                //.Replace(Resource.Id.container, new LogoutFragment())
-                .CommitAllowingStateLoss();
-        }
-
-        private void ShowLogin()
-        {
-            this.Activity.SupportFragmentManager
-                .BeginTransaction()
-                //.Replace(Resource.Id.container, new LoginFragment())
-                .CommitAllowingStateLoss();
-            VKSdk.Login(Activity, MyScopes);
-            
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -83,13 +52,46 @@ namespace MTS.Activity
             FloatingActionButton fab = _view.FindViewById<FloatingActionButton>(Resource.Id.fab_add_scheduler);
             fab.Click += Fab_Click;
 
+            SetDataToAdapter();
             return _view;
         }
 
         private void Fab_Click(object sender, EventArgs e)
         {
-            new FragmentUtil(this.Activity, this.Activity.SupportFragmentManager)
-                .CreateLoadView(Resource.Id.fragment_main_container, new SchedulerNewItemFragment());
+            var selectedTime = new DateTime();
+
+            var frag = DatePickerFragment.NewInstance(delegate (DateTime date)
+            {
+                var output = new DateTime(date.Year, date.Month, date.Day,
+                    selectedTime.Hour, selectedTime.Minute, selectedTime.Second);
+
+                var id = DateTime.Now.ToString().GetHashCode();
+                _schedulerItems.Add(new SchedulerItem()
+                    {
+                        Id = id,
+                        SchedulerTitle = "Без названия",
+                        Time = output
+                    }
+                );
+
+                var values = new ContentValues();
+                values.Put("id", id.ToString());
+                values.Put("schedulerTitle", "Без названия");
+                values.Put("Time", output.ToString());
+
+                _sqliteDbUtil.InsertRowScheduler(values);
+                _adapter.NotifyDataSetChanged();
+            });
+
+            var timePicker = TimePickerFragment.NewInstance(delegate (DateTime time)
+            {
+                selectedTime = time;
+
+                frag.Show(this.FragmentManager, DatePickerFragment.TAG);
+            });
+
+            timePicker.Show(this.FragmentManager, TimePickerFragment.TAG);
+
         }
 
         private void LoadData()

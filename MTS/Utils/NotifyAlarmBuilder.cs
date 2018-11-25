@@ -5,11 +5,13 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.V4.App;
 using Android.Views;
 using Android.Widget;
+using Uri = Android.Net.Uri;
 
 namespace MTS.Utils
 {
@@ -19,6 +21,7 @@ namespace MTS.Utils
         public string ContentTitle { set; get; }
         public string ContentText { set; get; }
         public string ContentInfo { set; get; }
+        public string ContentRingtonePath { set; get; }
 
         public static string ChannelId => channelId;
         public static string ChannelDescription => channelDescription;
@@ -60,12 +63,13 @@ namespace MTS.Utils
             var builder = new NotificationCompat.Builder(this._activity);
             var manager = (NotificationManager)this._activity.GetSystemService(Context.NotificationService);
             builder.SetAutoCancel(true)
-                .SetSmallIcon(Resource.Drawable.navigation_empty_icon)
+                .SetSmallIcon(Resource.Drawable.baseline_exit_to_app_24px)
                 .SetContentTitle(this.ContentTitle)
                 .SetContentText(this.ContentText)
-                .SetContentInfo(this.ContentInfo)
-                .SetCategory(Notification.CategoryCall)
+                .SetCategory(Notification.CategoryEvent)
                 .SetChannelId(ChannelId)
+                .SetDefaults(NotificationCompat.DefaultAll)
+                .SetSound(Uri.Parse(ContentRingtonePath))
                 .SetVibrate(new long[20]);
 
             manager.Notify(1, builder.Build());
