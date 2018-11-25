@@ -71,23 +71,22 @@ namespace MTS.Activity
         {
             var selectedTime = new DateTime();
 
-            var frag = DatePickerFragment.NewInstance(delegate (DateTime date)
+            var timePicker = TimePickerFragment.NewInstance(delegate (DateTime time)
             {
-                var output = new DateTime(date.Year, date.Month, date.Day,
-                    selectedTime.Hour, selectedTime.Minute, selectedTime.Second);
+                selectedTime = time;
 
                 ContentValues values = new ContentValues();
-                values.Put("alarmTime", output.ToString());
+                values.Put("alarmTime", selectedTime.ToString());
                 values.Put("alarmStatus", Convert.ToInt32(false));
                 values.Put("nameAlarm", "Без названия");
                 values.Put("daysAlarm", "");
-                
+
                 _sqliteDbUtil.InsertRowAlarms(values);
 
                 _alarmItems.Add(new AlarmItem()
                 {
                     Checked = false,
-                    Time = output,
+                    Time = selectedTime,
                     Id = _alarmItems.Count,
                     NameAlarm = "Без названия",
                     DaysAlarm = ""
@@ -96,17 +95,7 @@ namespace MTS.Activity
                 _adapter.NotifyDataSetChanged();
             });
 
-            var timePicker = TimePickerFragment.NewInstance(delegate (DateTime time)
-            {
-                selectedTime = time;
-
-                frag.Show(this.FragmentManager, DatePickerFragment.TAG);
-            });
-
             timePicker.Show(this.FragmentManager, TimePickerFragment.TAG);
-      
-            //Snackbar.Make(view, "Replace with your own action", Snackbar.LengthLong)
-            //.SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
         }
         
         private async void SetDataToAdapter()

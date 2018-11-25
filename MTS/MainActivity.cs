@@ -42,8 +42,8 @@ namespace MTS
             BottomNavigationView navigation = FindViewById<BottomNavigationView>(Resource.Id.navigation_menu);
             navigation.SetOnNavigationItemSelectedListener(this);
 
-            new FragmentUtil(this, this.SupportFragmentManager)
-                .CreateLoadView(Resource.Id.fragment_main_container, new SchedulerFragment());
+            //new FragmentUtil(this, this.SupportFragmentManager)
+                //.CreateLoadView(Resource.Id.fragment_main_container, new SchedulerFragment());
 
             //var notify = new NotifyAlarmBuilder(this);
             //notify.CreateNotificationChannel();
@@ -96,6 +96,8 @@ namespace MTS
                     var idRow = mSharedPref.GetInt("ITEM_ID", 0);
 
                     sqLiteDbUtil.UpdateRowAlarms(values, idRow.ToString());
+
+                    sqLiteDbUtil.Database.Close();
                 }
             }
 
@@ -166,7 +168,15 @@ namespace MTS
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            VKSdk.Logout();
+
+            try
+            {
+                VKSdk.Logout();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }

@@ -89,7 +89,7 @@ namespace MTS.Adapters
             _switchCompat.CheckedChange += _switchCompat_CheckedChange;
 
             _textView = view.FindViewById<TextView>(Resource.Id.text_day_alarm);
-            _textView.Text = Convert.ToString(item.Time.DayOfWeek);
+            _textView.Text = "";//Convert.ToString(item.Time.DayOfWeek);
 
             _imageButton = view.FindViewById<ImageButton>(Resource.Id.btn_delete_alarm);
             _imageButton.Tag = item.Id;
@@ -138,7 +138,8 @@ namespace MTS.Adapters
                     _daysCheckboxes[checkBoxIndex].Checked = true;
                 }
             }
-         
+
+            this.NotifyDataSetChanged();
             return view;
         }
 
@@ -188,6 +189,20 @@ namespace MTS.Adapters
             }
 
             _sqLiteDbUtil.UpdateRowAlarms(values, id.ToString());
+
+            values.Put("alarmStatus", Convert.ToInt32(true));
+
+            _sqLiteDbUtil.UpdateRowAlarms(values, id.ToString());
+
+            foreach (var itemSw in Items)
+            {
+                if (itemSw.Id.ToString() != id.ToString()) continue;
+                itemSw.Checked = true;
+            }
+
+            this.NotifyDataSetChanged();
+            
+            _sqLiteDbUtil.Database.Close();
         }
 
         private void _textRingtone_Click(object sender, EventArgs e)
@@ -206,6 +221,8 @@ namespace MTS.Adapters
             mPrefsEditor.Commit();
 
             _context.StartActivityForResult(intent, 111);
+            
+            _sqLiteDbUtil.Database.Close();
         }
 
         private void _inputEditText_AfterTextChanged(object sender, Android.Text.AfterTextChangedEventArgs e)
@@ -222,6 +239,10 @@ namespace MTS.Adapters
                 if (item.Id.ToString() != inputText.Tag.ToString()) continue;
                 item.NameAlarm = inputText.Text;
             }
+
+            this.NotifyDataSetChanged();
+
+            _sqLiteDbUtil.Database.Close();
         }
 
         private void _imageButton_Click(object sender, EventArgs e)
@@ -234,9 +255,15 @@ namespace MTS.Adapters
             {
                 if (Items[i].Id.ToString() != button.Tag.ToString()) continue;
                 Items.RemoveAt(i);
-
-                this.NotifyDataSetChanged();
             }
+
+            this.NotifyDataSetChanged();
+
+            Intent intent = new Intent(AlarmClock.ActionDismissAlarm);
+            intent.PutExtra(AlarmClock.ExtraAlarmSearchMode, AlarmClock.AlarmSearchModeLabel);
+            Context.StartActivity(intent);
+
+            _sqLiteDbUtil.Database.Close();
         }
 
         private void _switchCompat_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
@@ -252,9 +279,16 @@ namespace MTS.Adapters
             {
                 if (item.Id.ToString() != switchCompat.Tag.ToString()) continue;
                 item.Checked = switchCompat.Checked;
-
-                this.NotifyDataSetChanged();
             }
+
+            this.NotifyDataSetChanged();
+            
+            _sqLiteDbUtil.Database.Close();
+        }
+
+        ~AlarmAdapter()
+        {
+            _sqLiteDbUtil.Database.Close();
         }
     }
 }

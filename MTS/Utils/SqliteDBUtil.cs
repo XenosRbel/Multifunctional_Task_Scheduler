@@ -65,17 +65,44 @@ namespace MTS.Utils
 
         public void InsertRowAlarms(ContentValues values)
         {
-            Database.Insert("Alarms", null, values);
+            try
+            {
+                Database.Insert("Alarms", null, values);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Database = SQLiteDatabase.OpenOrCreateDatabase(GetPathDB(), null);
+                Database.Insert("Alarms", null, values);
+            }
         }
 
         public void UpdateRowAlarms(ContentValues values, string idRow)
         {
-            Database.Update("Alarms", values, $"id = {idRow}", null);
+            try
+            {
+                Database.Update("Alarms", values, $"id = {idRow}", null);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Database = SQLiteDatabase.OpenOrCreateDatabase(GetPathDB(), null);
+                Database.Update("Alarms", values, $"id = {idRow}", null);
+            }
         }
 
         public void DeleteRowAlarms(string idRow)
         {
-            Database.Delete("Alarms", $"id = {idRow}", null);
+            try
+            {
+                Database.Delete("Alarms", $"id = {idRow}", null);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Database = SQLiteDatabase.OpenOrCreateDatabase(GetPathDB(), null);
+                Database.Delete("Alarms", $"id = {idRow}", null);
+            }
         }
 
         public void InsertRowScheduler(ContentValues values)
@@ -95,43 +122,63 @@ namespace MTS.Utils
 
         public void GetAlarmItems(ref List<AlarmItem> data)
         {
-            var query = Database.RawQuery("SELECT * FROM Alarms;", null);
-            if (query.MoveToFirst())
+            try
             {
-                do
+                var query = Database.RawQuery("SELECT * FROM Alarms;", null);
+                if (query.MoveToFirst())
                 {
-                    data.Add(new AlarmItem()
+                    do
                     {
-                        Checked = Convert.ToBoolean(query.GetInt(2)),
-                        Time = Convert.ToDateTime(query.GetString(1)),
-                        Id = Convert.ToInt32(query.GetInt(0)),
-                        NameAlarm = Convert.ToString(query.GetString(3)),
-                        DaysAlarm = Convert.ToString(query.GetString(4)),
-                        RingtoneUri = Convert.ToString(query.GetString(5))
-                    });
+                        data.Add(new AlarmItem()
+                        {
+                            Checked = Convert.ToBoolean(query.GetInt(2)),
+                            Time = Convert.ToDateTime(query.GetString(1)),
+                            Id = Convert.ToInt32(query.GetInt(0)),
+                            NameAlarm = Convert.ToString(query.GetString(3)),
+                            DaysAlarm = Convert.ToString(query.GetString(4)),
+                            RingtoneUri = Convert.ToString(query.GetString(5))
+                        });
+                    }
+                    while (query.MoveToNext());
                 }
-                while (query.MoveToNext());
+                query.Close();
             }
-            query.Close();
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Database = SQLiteDatabase.OpenOrCreateDatabase(GetPathDB(), null);
+            }
         }
 
         public void GetSchedulers(ref List<SchedulerItem> data)
         {
-            var query = Database.RawQuery("SELECT * FROM Scheduler;", null);
-            if (query.MoveToFirst())
+            try
             {
-                do
+                var query = Database.RawQuery("SELECT * FROM Scheduler;", null);
+                if (query.MoveToFirst())
                 {
-                    //data.Add(new SchedulerItem()
-                    //{
-                    //    Checked = Convert.ToBoolean(query.GetInt(2)),
-                    //    Time = Convert.ToDateTime(query.GetString(1)),
-                    //    Id = Convert.ToInt32(query.GetInt(0))
-                    //});
+                    do
+                    {
+                        //data.Add(new SchedulerItem()
+                        //{
+                        //    Checked = Convert.ToBoolean(query.GetInt(2)),
+                        //    Time = Convert.ToDateTime(query.GetString(1)),
+                        //    Id = Convert.ToInt32(query.GetInt(0))
+                        //});
+                    }
+                    while (query.MoveToNext());
                 }
-                while (query.MoveToNext());
+                query.Close();
             }
-            query.Close();
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        ~SqLiteDBUtil()
+        {
+            this.Database.Close();
         }
     }
 }
