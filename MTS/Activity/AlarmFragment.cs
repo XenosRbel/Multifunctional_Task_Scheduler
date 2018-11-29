@@ -22,6 +22,7 @@ using Android.Widget;
 using MTS.Adapters;
 using MTS.Entity;
 using MTS.Utils;
+using Uri = Android.Net.Uri;
 
 namespace MTS.Activity
 {
@@ -69,28 +70,31 @@ namespace MTS.Activity
 
         private void FabOnClick(object sender, EventArgs eventArgs)
         {
-            var selectedTime = new DateTime();
-
             var timePicker = TimePickerFragment.NewInstance(delegate (DateTime time)
             {
-                selectedTime = time;
+                var id = DateTime.Now.ToString(CultureInfo.CurrentCulture).GetHashCode();
+                var uri = Uri.Parse("content://settings/system/notification_sound");
+                var ringTonePath = "/system/notification_sound";
+                var ringtone = RingtoneManager.GetRingtone(this.Activity, uri);
+                var title = ringtone.GetTitle(this.Activity);
 
-                var id = DateTime.Now.ToString().GetHashCode();
                 _alarmItems.Add(new AlarmItem()
                 {
                     Checked = false,
-                    Time = selectedTime,
+                    Time = time,
                     Id = id,
                     NameAlarm = "Без названия",
-                    DaysAlarm = ""
+                    DaysAlarm = "",
+                    RingtoneUri = "content://settings" + ringTonePath + " " + title
                 });
 
-                ContentValues values = new ContentValues();
+                var values = new ContentValues();
                 values.Put("id", id.ToString());
-                values.Put("alarmTime", selectedTime.ToString());
+                values.Put("alarmTime", time.ToString());
                 values.Put("alarmStatus", Convert.ToInt32(false));
                 values.Put("nameAlarm", "Без названия");
                 values.Put("daysAlarm", "");
+                values.Put("ringtoneUri", "content://settings" + ringTonePath + " " + title);
 
                 _sqliteDbUtil.InsertRowAlarms(values);
                 _adapter.NotifyDataSetChanged();

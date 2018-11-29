@@ -90,7 +90,7 @@ namespace MTS
                     var title = ringtone.GetTitle(this);
                     
                     var values = new ContentValues();
-                    values.Put("ringtoneUri", ringTonePath + " " + title);
+                    values.Put("ringtoneUri", "content://settings" + ringTonePath + " " + title);
                     var sqLiteDbUtil = new SqLiteDBUtil(this);
                     var mSharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
                     var idRow = mSharedPref.GetInt("ITEM_ID", 0);
@@ -109,7 +109,7 @@ namespace MTS
                     var title = ringtone.GetTitle(this);
 
                     var values = new ContentValues();
-                    values.Put("RingtoneUri", ringTonePath + " " + title);
+                    values.Put("RingtoneUri", "content://settings" + ringTonePath + " " + title);
                     var sqLiteDbUtil = new SqLiteDBUtil(this);
                     var mSharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
                     var idRow = mSharedPref.GetInt("ITEM_ID", 0);
@@ -189,6 +189,7 @@ namespace MTS
             try
             {
                 VKSdk.Logout();
+                new SqLiteDBUtil(this).Database.Close();
             }
             catch (Exception e)
             {

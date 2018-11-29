@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Database.Sqlite;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
@@ -18,6 +20,7 @@ using MTS.Adapters;
 using MTS.Entity;
 using MTS.Utils;
 using VKontakte;
+using Uri = Android.Net.Uri;
 
 namespace MTS.Activity
 {
@@ -25,7 +28,6 @@ namespace MTS.Activity
     {
         private View _view;
         private ListViewCompat _listView;
-        private SQLiteDatabase _database;
         private SchedulerAdapter _adapter;
         private SqLiteDBUtil _sqliteDbUtil;
         private List<SchedulerItem> _schedulerItems;
@@ -65,12 +67,19 @@ namespace MTS.Activity
                 var output = new DateTime(date.Year, date.Month, date.Day,
                     selectedTime.Hour, selectedTime.Minute, selectedTime.Second);
 
-                var id = DateTime.Now.ToString().GetHashCode();
+                var id = DateTime.Now.ToString(CultureInfo.CurrentCulture).GetHashCode();
+                var uri = Uri.Parse("content://settings/system/notification_sound");
+                var ringTonePath = "/system/notification_sound";
+                var ringtone = RingtoneManager.GetRingtone(this.Activity, uri);
+                var title = ringtone.GetTitle(this.Activity);
+
                 _schedulerItems.Add(new SchedulerItem()
                     {
                         Id = id,
                         SchedulerTitle = "Без названия",
-                        Time = output
+                        Time = output,
+                        SchedulerDescription = "Без описания",
+                        RingtoneUri = "content://settings" + ringTonePath + " " + title
                     }
                 );
 
@@ -78,6 +87,8 @@ namespace MTS.Activity
                 values.Put("id", id.ToString());
                 values.Put("schedulerTitle", "Без названия");
                 values.Put("Time", output.ToString());
+                values.Put("SchedulerDescription", "Без описания");
+                values.Put("RingtoneUri", "content://settings"+ringTonePath + " " + title);
 
                 _sqliteDbUtil.InsertRowScheduler(values);
                 _adapter.NotifyDataSetChanged();
@@ -91,7 +102,6 @@ namespace MTS.Activity
             });
 
             timePicker.Show(this.FragmentManager, TimePickerFragment.TAG);
-
         }
 
         private void LoadData()

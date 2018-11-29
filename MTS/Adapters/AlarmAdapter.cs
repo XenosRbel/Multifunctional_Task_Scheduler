@@ -171,9 +171,13 @@ namespace MTS.Adapters
             intent.PutExtra(AlarmClock.ExtraMinutes, item.Time.Minute);
             intent.PutExtra(AlarmClock.ExtraDays, _alarmDays);
             intent.PutExtra(AlarmClock.ExtraMessage, item.NameAlarm);
+
+            var uri = Uri.Parse(item.RingtoneUri.Split(' ').ToArray()[0]);
+            var ringtone = RingtoneManager.GetRingtone(this.Context, uri);
+
             if (item.RingtoneUri != null)
             {
-                intent.PutExtra(AlarmClock.ValueRingtoneSilent, Uri.Parse(item.RingtoneUri.Split(' ').ToArray()[0]));
+                intent.PutExtra(AlarmClock.ExtraRingtone, uri);
             }
             Context.StartActivity(intent);
 

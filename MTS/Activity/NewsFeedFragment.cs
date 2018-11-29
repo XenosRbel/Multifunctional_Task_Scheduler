@@ -58,7 +58,6 @@ namespace MTS.Activity
             var webView = _view.FindViewById<WebView>(Resource.Id.webView_newsfeed);
             webView.Settings.JavaScriptEnabled = true;
             webView.Settings.SaveFormData = true;
-            webView.Settings.SafeBrowsingEnabled = true;
             webView.Settings.SetSupportZoom(true);
             webView.Settings.BuiltInZoomControls = true;
             webView.LoadUrl("https://zen.yandex.ru/");

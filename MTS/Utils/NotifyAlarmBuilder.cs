@@ -43,19 +43,19 @@ namespace MTS.Utils
 
         public void CreateNotificationChannel()
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
-            {
-                return;
-            }
+            //if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            //{
+            //    return;
+            //}
 
-            var channel = new NotificationChannel(ChannelId, ChannelName, NotificationImportance.Default)
-            {
-                Description = ChannelDescription,
-                LockscreenVisibility = NotificationVisibility.Public
-            };
+            //var channel = new NotificationChannel(ChannelId, ChannelName, NotificationImportance.Default)
+            //{
+            //    Description = ChannelDescription,
+            //    LockscreenVisibility = NotificationVisibility.Public
+            //};
 
-            var notificationManager = (NotificationManager)_activity.GetSystemService(Context.NotificationService);
-            notificationManager.CreateNotificationChannel(channel);
+            //var notificationManager = (NotificationManager)_activity.GetSystemService(Context.NotificationService);
+            //notificationManager.CreateNotificationChannel(channel);
         }
 
         public void Show()
@@ -67,7 +67,6 @@ namespace MTS.Utils
                 .SetContentTitle(this.ContentTitle)
                 .SetContentText(this.ContentText)
                 .SetCategory(Notification.CategoryEvent)
-                .SetChannelId(ChannelId)
                 .SetDefaults(NotificationCompat.DefaultAll)
                 .SetSound(Uri.Parse(ContentRingtonePath))
                 .SetVibrate(new long[20]);

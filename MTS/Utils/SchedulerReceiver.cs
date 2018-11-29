@@ -15,8 +15,9 @@ using TimeZone = System.TimeZone;
 
 namespace MTS.Utils
 {
-    [BroadcastReceiver(Enabled = true, Exported = false)]
-    [IntentFilter(new[] { "MTS.MTS" })]
+    [BroadcastReceiver]
+    //[BroadcastReceiver(Enabled = true, Exported = false)]
+    //[IntentFilter(new[] { "MTS.MTS" })]
     public class SchedulerReceiver : BroadcastReceiver
     {
         public override void OnReceive(Context context, Intent intent)
@@ -25,6 +26,7 @@ namespace MTS.Utils
 
             PowerManager pm = (PowerManager)context.GetSystemService(Context.PowerService);
             PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.Partial, "MTS.MTS");
+
             //Acquire the lock
             wl.Acquire();
             var notify = new NotifyAlarmBuilder(context);
@@ -38,7 +40,7 @@ namespace MTS.Utils
             wl.Release();
         }
 
-        public void SetOnetimeTimer(Context context, int requestCode, long cal, SchedulerItem schedulerItem)
+        public void SetOnetimeTimer(Context context, long cal, SchedulerItem schedulerItem)
         {
             AlarmManager am = (AlarmManager)context.GetSystemService(Context.AlarmService);
             Intent intent = new Intent(context, typeof(SchedulerReceiver));
@@ -49,7 +51,7 @@ namespace MTS.Utils
                 intent.PutExtra("RingtoneUri", schedulerItem.RingtoneUri.Split(' ').ToArray()[0]);
             }
 
-            PendingIntent pi = PendingIntent.GetBroadcast(context, requestCode, intent, PendingIntentFlags.CancelCurrent);
+            PendingIntent pi = PendingIntent.GetBroadcast(context, schedulerItem.Id, intent, PendingIntentFlags.CancelCurrent);
             
             am.Set(AlarmType.RtcWakeup, cal, pi);
         }

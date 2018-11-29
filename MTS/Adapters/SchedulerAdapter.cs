@@ -5,14 +5,17 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
-using Android.Icu.Util;
+using Android.Icu.Text;
 using Android.Media;
 using Android.OS;
 using Android.Preferences;
 using Android.Runtime;
 using Android.Support.Design.Widget;
+using Android.Support.V4.Util;
+using Android.Telephony;
 using Android.Views;
 using Android.Widget;
+using Java.Util;
 using MTS.Entity;
 using MTS.Utils;
 
@@ -153,6 +156,7 @@ namespace MTS.Adapters
         private void _saveButton_Click(object sender, EventArgs e)
         {
             var button = (ImageButton) sender;
+
             var id = Convert.ToInt32(button.Tag);
             var selectedItem = _schedulerItems.Where(x => x.Id == id).ToArray().First();
 
@@ -167,14 +171,39 @@ namespace MTS.Adapters
             this.NotifyDataSetChanged();
 
             var shedulerTask = new SchedulerReceiver();
+            TelephonyManager manager = (TelephonyManager)this._context.GetSystemService(Context.TelephonyService);
 
-            var cal = Calendar.GetInstance(Android.Icu.Util.TimeZone.Default);
-
+            var tz = Java.Util.TimeZone.GetTimeZone("GMT+03:00");
+            var cal = Calendar.GetInstance(tz);
+            cal.TimeInMillis = Java.Lang.JavaSystem.CurrentTimeMillis();
             cal.Set(selectedItem.Time.Year, selectedItem.Time.Month, selectedItem.Time.Day, selectedItem.Time.Hour, selectedItem.Time.Minute);
-            var year = cal.Time.Year;
-            var day = cal.Time.Day;
+            
 
-            shedulerTask.SetOnetimeTimer(this._context, id, selectedItem.Time.TimeOfDay.Ticks, selectedItem);
+            Calendar calendar = Calendar.GetInstance(tz);
+           // calendar.TimeInMillis = Java.Lang.JavaSystem.CurrentTimeMillis();
+            calendar.Add(CalendarField.Month, Math.Abs(selectedItem.Time.Month - DateTime.Today.Month));
+            calendar.Add(CalendarField.Hour, Math.Abs(selectedItem.Time.Hour - DateTime.Today.Hour));
+            calendar.Add(CalendarField.Minute, Math.Abs(selectedItem.Time.Minute - DateTime.Today.Minute));
+            calendar.Add(CalendarField.Second, 30);
+            calendar.Set(CalendarField.Millisecond, 0);
+
+            Intent intent = new Intent(this._context, typeof(SchedulerReceiver));
+            intent.PutExtra("SchedulerDescription", selectedItem.SchedulerDescription);
+            intent.PutExtra("SchedulerTitle", selectedItem.SchedulerTitle);
+            if (selectedItem.RingtoneUri != null)
+            {
+                intent.PutExtra("RingtoneUri", selectedItem.RingtoneUri.Split(' ').ToArray()[0]);
+            }
+
+            
+            PendingIntent pi = PendingIntent.GetBroadcast(this._context, selectedItem.Id, intent, PendingIntentFlags.UpdateCurrent);
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EE mm dd HH:mm:ss 'GMT'Z yyyy");
+            string a = dateFormat.Format(cal.Time);
+
+            AlarmManager am = (AlarmManager)_context.GetSystemService(Context.AlarmService);
+            am.Set(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + calendar.TimeInMillis, pi);
+            //shedulerTask.SetOnetimeTimer(this._context, selectedItem.Time.Ticks, selectedItem);
         }
 
         private void _ringtoneTextView_Click(object sender, EventArgs e)

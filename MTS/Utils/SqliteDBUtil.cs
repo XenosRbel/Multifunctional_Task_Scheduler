@@ -35,9 +35,10 @@ namespace MTS.Utils
 
         public string GetPathDB()
         {
-            var path = Android.OS.Environment.ExternalStorageDirectory.Path +
-                       $"/Android/data/{Activity.Resources.GetString(Resource.String.app_name)}.{Activity.Resources.GetString(Resource.String.app_name)}/files/";
+            var path = _activity.GetExternalFilesDir(null).Path + "/";
+            System.IO.Directory.CreateDirectory(path);
             var filePath = Path.Combine(path, "MTS.db");
+            
             return filePath;
         }
 
@@ -67,44 +68,17 @@ namespace MTS.Utils
 
         public void InsertRowAlarms(ContentValues values)
         {
-            try
-            {
-                Database.Insert("Alarms", null, values);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Database = SQLiteDatabase.OpenOrCreateDatabase(GetPathDB(), null);
-                Database.Insert("Alarms", null, values);
-            }
+            Database.Insert("Alarms", null, values);
         }
 
         public void UpdateRowAlarms(ContentValues values, string idRow)
         {
-            try
-            {
-                Database.Update("Alarms", values, $"id = {idRow}", null);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Database = SQLiteDatabase.OpenOrCreateDatabase(GetPathDB(), null);
-                Database.Update("Alarms", values, $"id = {idRow}", null);
-            }
+            Database.Update("Alarms", values, $"id = {idRow}", null);
         }
 
         public void DeleteRowAlarms(string idRow)
         {
-            try
-            {
-                Database.Delete("Alarms", $"id = {idRow}", null);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Database = SQLiteDatabase.OpenOrCreateDatabase(GetPathDB(), null);
-                Database.Delete("Alarms", $"id = {idRow}", null);
-            }
+            Database.Delete("Alarms", $"id = {idRow}", null);
         }
 
         public void InsertRowScheduler(ContentValues values)
@@ -114,15 +88,8 @@ namespace MTS.Utils
 
         public void UpdateRowScheduler(ContentValues values, string idRow)
         {
-            try
-            {
-                Database.Update("Scheduler", values, $"id = {idRow}", null);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Database = SQLiteDatabase.OpenOrCreateDatabase(GetPathDB(), null);
-            }
+
+            Database.Update("Scheduler", values, $"id = {idRow}", null);
         }
 
         public void DeleteRowScheduler(string idRow)
@@ -132,61 +99,45 @@ namespace MTS.Utils
 
         public void GetAlarmItems(ref List<AlarmItem> data)
         {
-            try
+            var query = Database.RawQuery("SELECT * FROM Alarms;", null);
+            if (query.MoveToFirst())
             {
-                var query = Database.RawQuery("SELECT * FROM Alarms;", null);
-                if (query.MoveToFirst())
+                do
                 {
-                    do
+                    data.Add(new AlarmItem()
                     {
-                        data.Add(new AlarmItem()
-                        {
-                            Checked = Convert.ToBoolean(query.GetInt(2)),
-                            Time = Convert.ToDateTime(query.GetString(1)),
-                            Id = Convert.ToInt32(query.GetInt(0)),
-                            NameAlarm = Convert.ToString(query.GetString(3)),
-                            DaysAlarm = Convert.ToString(query.GetString(4)),
-                            RingtoneUri = Convert.ToString(query.GetString(5))
-                        });
-                    }
-                    while (query.MoveToNext());
+                        Checked = Convert.ToBoolean(query.GetInt(2)),
+                        Time = Convert.ToDateTime(query.GetString(1)),
+                        Id = Convert.ToInt32(query.GetInt(0)),
+                        NameAlarm = Convert.ToString(query.GetString(3)),
+                        DaysAlarm = Convert.ToString(query.GetString(4)),
+                        RingtoneUri = Convert.ToString(query.GetString(5))
+                    });
                 }
-                query.Close();
+                while (query.MoveToNext());
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Database = SQLiteDatabase.OpenOrCreateDatabase(GetPathDB(), null);
-            }
+            query.Close();
         }
 
         public void GetSchedulers(ref List<SchedulerItem> data)
         {
-            try
+            var query = Database.RawQuery("SELECT * FROM Scheduler;", null);
+            if (query.MoveToFirst())
             {
-                var query = Database.RawQuery("SELECT * FROM Scheduler;", null);
-                if (query.MoveToFirst())
+                do
                 {
-                    do
+                    data.Add(new SchedulerItem()
                     {
-                        data.Add(new SchedulerItem()
-                        {
-                            Id = Convert.ToInt32(query.GetInt(0)),
-                            SchedulerTitle = Convert.ToString(query.GetString(1)),
-                            SchedulerDescription = Convert.ToString(query.GetString(2)),
-                            Time = Convert.ToDateTime(query.GetString(3)),
-                            RingtoneUri = Convert.ToString(query.GetString(4))
-                        });
-                    }
-                    while (query.MoveToNext());
+                        Id = Convert.ToInt32(query.GetInt(0)),
+                        SchedulerTitle = Convert.ToString(query.GetString(1)),
+                        SchedulerDescription = Convert.ToString(query.GetString(2)),
+                        Time = Convert.ToDateTime(query.GetString(3)),
+                        RingtoneUri = Convert.ToString(query.GetString(4))
+                    });
                 }
-                query.Close();
+                while (query.MoveToNext());
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Database = SQLiteDatabase.OpenOrCreateDatabase(GetPathDB(), null);
-            }
+            query.Close();
         }
 
         ~SqLiteDBUtil()
