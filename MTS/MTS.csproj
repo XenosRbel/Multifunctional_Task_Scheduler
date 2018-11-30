@@ -25,9 +25,9 @@
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <AndroidKeyStore>true</AndroidKeyStore>
     <AndroidSigningKeyStore>D:\Program Files\CloudStation\Programming\Keys\BitcoinMinerClick.keystore</AndroidSigningKeyStore>
-    <AndroidSigningStorePass>pavel9684997</AndroidSigningStorePass>
+    <AndroidSigningStorePass></AndroidSigningStorePass>
     <AndroidSigningKeyAlias>pirond</AndroidSigningKeyAlias>
-    <AndroidSigningKeyPass>9684997</AndroidSigningKeyPass>
+    <AndroidSigningKeyPass></AndroidSigningKeyPass>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
