@@ -23,11 +23,15 @@
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
-    <AndroidKeyStore>true</AndroidKeyStore>
-    <AndroidSigningKeyStore>D:\Program Files\CloudStation\Programming\Keys\BitcoinMinerClick.keystore</AndroidSigningKeyStore>
-    <AndroidSigningStorePass></AndroidSigningStorePass>
-    <AndroidSigningKeyAlias>pirond</AndroidSigningKeyAlias>
-    <AndroidSigningKeyPass></AndroidSigningKeyPass>
+    <AndroidKeyStore>false</AndroidKeyStore>
+    <AndroidSigningKeyStore>
+    </AndroidSigningKeyStore>
+    <AndroidSigningStorePass>
+    </AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>
+    </AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>
+    </AndroidSigningKeyPass>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -80,6 +84,7 @@
     <Compile Include="Adapters\SchedulerAdapter.cs" />
     <Compile Include="Entity\AlarmItem.cs" />
     <Compile Include="Entity\SchedulerItem.cs" />
+    <Compile Include="Utils\ActionExecutionTimer.cs" />
     <Compile Include="Utils\FragmentUtil.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
