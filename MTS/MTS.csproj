@@ -87,6 +87,7 @@
     <Compile Include="Utils\NotifyAlarmBuilder.cs" />
     <Compile Include="Utils\SchedulerReceiver.cs" />
     <Compile Include="Utils\SqliteDBUtil.cs" />
+    <Compile Include="Utils\TimerExecuteActions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml">
