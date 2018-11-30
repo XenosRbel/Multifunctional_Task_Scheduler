@@ -23,11 +23,15 @@
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
-    <AndroidKeyStore>true</AndroidKeyStore>
-    <AndroidSigningKeyStore>D:\Program Files\CloudStation\Programming\Keys\BitcoinMinerClick.keystore</AndroidSigningKeyStore>
-    <AndroidSigningStorePass>pavel9684997</AndroidSigningStorePass>
-    <AndroidSigningKeyAlias>pirond</AndroidSigningKeyAlias>
-    <AndroidSigningKeyPass>9684997</AndroidSigningKeyPass>
+    <AndroidKeyStore>false</AndroidKeyStore>
+    <AndroidSigningKeyStore>
+    </AndroidSigningKeyStore>
+    <AndroidSigningStorePass>
+    </AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>
+    </AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>
+    </AndroidSigningKeyPass>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -80,6 +84,7 @@
     <Compile Include="Adapters\SchedulerAdapter.cs" />
     <Compile Include="Entity\AlarmItem.cs" />
     <Compile Include="Entity\SchedulerItem.cs" />
+    <Compile Include="Utils\ActionExecutionTimer.cs" />
     <Compile Include="Utils\FragmentUtil.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
@@ -87,7 +92,6 @@
     <Compile Include="Utils\NotifyAlarmBuilder.cs" />
     <Compile Include="Utils\SchedulerReceiver.cs" />
     <Compile Include="Utils\SqliteDBUtil.cs" />
-    <Compile Include="Utils\TimerExecuteActions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml">

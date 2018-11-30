@@ -17,7 +17,7 @@ namespace MTS.Utils
 {
     [BroadcastReceiver(Enabled = true, Exported = false)]
     [IntentFilter(new[] { "MTS.MTS" })]
-    class TimerExecuteActions : BroadcastReceiver
+    class ActionExecutionTimer : BroadcastReceiver
     {
         public override void OnReceive(Context context, Intent intent)
         {
@@ -25,7 +25,7 @@ namespace MTS.Utils
             PowerManager.WakeLock wl = pm.NewWakeLock(WakeLockFlags.Partial, "MTS.MTS");
 
             wl.Acquire();
-            
+
             //Your code for Delete data from DB
 
             wl.Release();
@@ -33,7 +33,7 @@ namespace MTS.Utils
 
         public void CancelAlarm(Context context)
         {
-            Intent intent = new Intent(context, typeof(SchedulerReceiver));
+            Intent intent = new Intent(context, typeof(ActionExecutionTimer));
             PendingIntent sender = PendingIntent.GetBroadcast(context, 0, intent, PendingIntentFlags.CancelCurrent);
             AlarmManager alarmManager = (AlarmManager)context.GetSystemService(Context.AlarmService);
             alarmManager.Cancel(sender);
@@ -41,8 +41,8 @@ namespace MTS.Utils
 
         public void SetOnetimeTimer(Context context)
         {
-            Intent intent = new Intent(context, typeof(TimerExecuteActions));
-            
+            Intent intent = new Intent(context, typeof(ActionExecutionTimer));
+
 
             PendingIntent pi = PendingIntent.GetBroadcast(context, 0, intent, PendingIntentFlags.UpdateCurrent);
             AlarmManager am = (AlarmManager)context.GetSystemService(Context.AlarmService);
