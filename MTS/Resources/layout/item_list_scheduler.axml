@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<LinearLayout
+		android:orientation="vertical"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_marginLeft="15dp"
+		android:layout_marginRight="15dp"
+		android:layout_height="wrap_content">
+		<android.support.design.widget.TextInputEditText
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/text_scheduler_title" />
+		<RelativeLayout
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"			
+			android:layout_marginBottom="10dp">
+			<TextView
+				android:text="Дата получения"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:id="@+id/text_scheduler_date_create" />
+			<TextView
+				android:text="Время получения"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				android:id="@+id/text_scheduler_time_create" />
+		</RelativeLayout>
+		<LinearLayout
+			android:orientation="horizontal"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/linearLayout2"
+			android:layout_marginTop="10dp">
+			<ImageView
+				android:src="@drawable/baseline_notifications_active_24px"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent" />
+			<TextView
+				android:text="@string/choice_ringrone"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_centerHorizontal="false"
+				android:layout_centerInParent="true"
+				android:id="@+id/text_choice_ringtone_scheduler"
+				android:layout_marginLeft="10dp" />
+		</LinearLayout>
+		<TextView
+			android:text="Описание задачи"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp" />
+		<EditText
+			android:inputType="textMultiLine"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/edit_text_scheduler" />
+	</LinearLayout>	
+	<RelativeLayout
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="10dp">
+		<ImageButton
+			android:src="@drawable/baseline_delete_forever_24px"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:id="@+id/btn_delete_scheduler"
+			android:layout_marginRight="10dp" />
+		<ImageButton
+			android:src="@drawable/baseline_check_circle_24px"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@id/btn_delete_scheduler"
+			android:id="@+id/btn_save_scheduler" />
+	</RelativeLayout>
+</LinearLayout>

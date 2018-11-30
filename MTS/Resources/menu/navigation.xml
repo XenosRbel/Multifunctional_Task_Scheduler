@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <item
+    android:id="@+id/navigation_scheduler"
+    android:icon="@drawable/baseline_list_24px"
+    android:title="@string/title_scheduler" />
+
+  <item
+    android:id="@+id/navigation_alarm"
+    android:icon="@drawable/baseline_alarm_24px"
+    android:title="@string/title_alarm" />
+
+  <item
+    android:id="@+id/navigation_newsFeed"
+    android:icon="@drawable/baseline_featured_play_list_24px"
+    android:title="@string/title_newsFeed" />
+
+  <item
+    android:id="@+id/navigation_exit"
+    android:icon="@drawable/baseline_exit_to_app_24px"
+    android:title="@string/title_exit" />
+
+</menu>
