@@ -169,34 +169,8 @@ namespace MTS.Adapters
             _sqLiteDbUtil.UpdateRowScheduler(values,id.ToString());
 
             this.NotifyDataSetChanged();
-            
 
-            var tz = Java.Util.TimeZone.GetTimeZone("GMT+03:00");
-            var cals = Calendar.GetInstance(tz);
-            cals.Set(CalendarField.Year, selectedItem.Time.Year);
-            cals.Set(CalendarField.DayOfMonth, selectedItem.Time.Day);
-            cals.Set(CalendarField.Month, selectedItem.Time.Month - 1);
-            cals.Set(CalendarField.Hour, selectedItem.Time.Hour);
-            cals.Set(CalendarField.Minute, selectedItem.Time.Minute);
-            cals.Set(CalendarField.Second, 0);
-            cals.Set(CalendarField.Millisecond, 0);
-
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy MMMM dd HH:mm:ss"); 
-            string datFormat = dateFormat.Format(cals.Time);
-
-            Intent intent = new Intent(this._context, typeof(SchedulerReceiver));
-            intent.PutExtra("SchedulerDescription", selectedItem.SchedulerDescription);
-            intent.PutExtra("SchedulerTitle", selectedItem.SchedulerTitle);
-            if (selectedItem.RingtoneUri != null)
-            {
-                intent.PutExtra("RingtoneUri", selectedItem.RingtoneUri.Split(' ').ToArray()[0]);
-            }
-            PendingIntent pi = PendingIntent.GetBroadcast(this._context, selectedItem.Id, intent, PendingIntentFlags.UpdateCurrent);
-            AlarmManager am = (AlarmManager)_context.GetSystemService(Context.AlarmService);
-            am.Set(AlarmType.RtcWakeup, cals.TimeInMillis, pi);
-
-            Toast.MakeText(_context, $"Задача создана на {datFormat}", ToastLength.Long).Show();
+            new SchedulerReceiver().SetOnetimeTimer(_context, selectedItem);
         }
 
         private void _ringtoneTextView_Click(object sender, EventArgs e)
@@ -205,7 +179,7 @@ namespace MTS.Adapters
             var id = Convert.ToInt32(text.Tag);
 
             Intent intent = new Intent(RingtoneManager.ActionRingtonePicker);
-            intent.PutExtra(RingtoneManager.ExtraRingtoneTitle, "Выберите рингтон:");
+            intent.PutExtra(RingtoneManager.ExtraRingtoneTitle, $"{_context.Resources.GetString(Resource.String.choice_ringrone)}");
             intent.PutExtra(RingtoneManager.ExtraRingtoneShowSilent, false);
             intent.PutExtra(RingtoneManager.ExtraRingtoneShowDefault, true);
             intent.PutExtra(RingtoneManager.ExtraRingtoneType, (int)RingtoneType.Notification);

@@ -3387,6 +3387,9 @@ namespace MTS
 			// aapt resource value: 0x7f080038
 			public const int vk_auth_success = 2131230776;
 			
+			// aapt resource value: 0x7f08003b
+			public const int vk_auth_verApi = 2131230779;
+			
 			// aapt resource value: 0x7f080037
 			public const int vk_data_theme = 2131230775;
 			

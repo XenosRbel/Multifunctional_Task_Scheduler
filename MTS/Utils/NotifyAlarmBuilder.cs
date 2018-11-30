@@ -20,16 +20,7 @@ namespace MTS.Utils
         private Context _activity;
         public string ContentTitle { set; get; }
         public string ContentText { set; get; }
-        public string ContentInfo { set; get; }
         public string ContentRingtonePath { set; get; }
-
-        public static string ChannelId => channelId;
-        public static string ChannelDescription => channelDescription;
-        public static string ChannelName => channelName;
-
-        private const string channelName = "Alarm";
-        private const string channelDescription = "Alarm Notification";
-        private const string channelId = "Alarm_Notify";
 
         public NotifyAlarmBuilder()
         {
@@ -41,25 +32,10 @@ namespace MTS.Utils
             _activity = activity;
         }
 
-        public void CreateNotificationChannel()
-        {
-            //if (Build.VERSION.SdkInt < BuildVersionCodes.O)
-            //{
-            //    return;
-            //}
-
-            //var channel = new NotificationChannel(ChannelId, ChannelName, NotificationImportance.Default)
-            //{
-            //    Description = ChannelDescription,
-            //    LockscreenVisibility = NotificationVisibility.Public
-            //};
-
-            //var notificationManager = (NotificationManager)_activity.GetSystemService(Context.NotificationService);
-            //notificationManager.CreateNotificationChannel(channel);
-        }
-
         public void Show()
         {
+            var uri = Uri.Parse(ContentRingtonePath);
+            
             var builder = new NotificationCompat.Builder(this._activity);
             var manager = (NotificationManager)this._activity.GetSystemService(Context.NotificationService);
             builder.SetAutoCancel(true)
@@ -67,9 +43,8 @@ namespace MTS.Utils
                 .SetContentTitle(this.ContentTitle)
                 .SetContentText(this.ContentText)
                 .SetCategory(Notification.CategoryEvent)
-                .SetDefaults(NotificationCompat.DefaultAll)
-                .SetSound(Uri.Parse(ContentRingtonePath))
-                .SetVibrate(new long[20]);
+                .SetDefaults((int)NotificationDefaults.Vibrate)
+                .SetSound(uri, (int)Stream.Notification);
 
             manager.Notify(1, builder.Build());
         }

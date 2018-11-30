@@ -12,4 +12,5 @@
   <string name="vk_auth_success">Пользователь прошел авторизацию</string>
   <string name="vk_auth_dismiss">Пользователь не прошел авторизацию</string>
   <string name="vk_auth_repeat">Повторить авторизацию</string>
+  <string name="vk_auth_verApi">5.92</string>
 </resources>

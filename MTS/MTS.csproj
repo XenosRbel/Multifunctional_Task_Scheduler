@@ -75,7 +75,6 @@
     <Compile Include="Activity\DatePickerFragment.cs" />
     <Compile Include="Activity\NewsFeedFragment.cs" />
     <Compile Include="Activity\SchedulerFragment.cs" />
-    <Compile Include="Activity\SchedulerNewItemFragment.cs" />
     <Compile Include="Activity\TimePickerFragment.cs" />
     <Compile Include="Adapters\AlarmAdapter.cs" />
     <Compile Include="Adapters\SchedulerAdapter.cs" />
@@ -90,11 +89,9 @@
     <Compile Include="Utils\SqliteDBUtil.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.axml">
@@ -180,6 +177,9 @@
     <AndroidResource Include="Resources\layout\fragment_newsfeed_dismiss.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

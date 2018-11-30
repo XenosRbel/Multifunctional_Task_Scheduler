@@ -90,7 +90,7 @@ namespace MTS.Adapters
             _switchCompat.CheckedChange += _switchCompat_CheckedChange;
 
             _textView = view.FindViewById<TextView>(Resource.Id.text_day_alarm);
-            _textView.Text = "";//Convert.ToString(item.Time.DayOfWeek);
+            _textView.Text = "";
 
             _imageButton = view.FindViewById<ImageButton>(Resource.Id.btn_delete_alarm);
             _imageButton.Tag = item.Id;
@@ -173,11 +173,10 @@ namespace MTS.Adapters
             intent.PutExtra(AlarmClock.ExtraMessage, item.NameAlarm);
 
             var uri = Uri.Parse(item.RingtoneUri.Split(' ').ToArray()[0]);
-            var ringtone = RingtoneManager.GetRingtone(this.Context, uri);
 
             if (item.RingtoneUri != null)
             {
-                intent.PutExtra(AlarmClock.ExtraRingtone, uri);
+                intent.PutExtra(AlarmClock.ExtraRingtone, uri.EncodedSchemeSpecificPart);
             }
             Context.StartActivity(intent);
 
@@ -217,7 +216,7 @@ namespace MTS.Adapters
             var text = (TextView) sender;
 
             Intent intent = new Intent(RingtoneManager.ActionRingtonePicker);
-            intent.PutExtra(RingtoneManager.ExtraRingtoneTitle, "Выберите рингтон:");
+            intent.PutExtra(RingtoneManager.ExtraRingtoneTitle, $"{_context.Resources.GetString(Resource.String.choice_ringrone)}");
             intent.PutExtra(RingtoneManager.ExtraRingtoneShowSilent, false);
             intent.PutExtra(RingtoneManager.ExtraRingtoneShowDefault, true);
             intent.PutExtra(RingtoneManager.ExtraRingtoneType, (int)RingtoneType.Alarm);

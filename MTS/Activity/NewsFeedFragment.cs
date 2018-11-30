@@ -35,7 +35,7 @@ namespace MTS.Activity
 
             VKSdk.CustomInitialize(this.Activity, this.Activity
                 .Resources
-                .GetInteger(Resource.Integer.com_vk_sdk_AppId), "5.92");
+                .GetInteger(Resource.Integer.com_vk_sdk_AppId), $"{this.Activity.Resources.GetString(Resource.String.vk_auth_verApi)}");
 
             VKSdk.WakeUpSession(this.Activity,
                 response => {

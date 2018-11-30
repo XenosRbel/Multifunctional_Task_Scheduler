@@ -19,11 +19,12 @@ using VKontakte.API.Methods;
 using VKontakte.Utils;
 using Calendar = Android.Icu.Util.Calendar;
 using TimeZone = Android.Icu.Util.TimeZone;
+using Uri = Android.Net.Uri;
 
 namespace MTS
 {
     [Register("MTS.MTS.MainActivity")]
-    [IntentFilter(new[] { Intent.ActionView }, DataScheme = "6762064", Categories = new[] {
+    [IntentFilter(new[] { Intent.ActionView }, DataScheme = "@integer/com_vk_sdk_AppId", Categories = new[] {
         Intent.CategoryBrowsable,
         Intent.CategoryDefault
     })]
@@ -43,22 +44,7 @@ namespace MTS
             navigation.SetOnNavigationItemSelectedListener(this);
 
             new FragmentUtil(this, this.SupportFragmentManager)
-                .CreateLoadView(Resource.Id.fragment_main_container, new SchedulerFragment());
-
-            //var notify = new NotifyAlarmBuilder(this);
-            //notify.CreateNotificationChannel();
-            //notify.ContentInfo = "Info";
-            //notify.ContentText = "Text";
-            //notify.ContentTitle = "Title";
-            //notify.Show();
-
-            //Intent i = new Intent(AlarmClock.ActionSetAlarm);
-            //i.PutExtra(AlarmClock.ExtraSkipUi, true);
-            //i.PutExtra(AlarmClock.ExtraHour, 21);
-            //i.PutExtra(AlarmClock.ExtraMinutes, 20);
-            ////i.PutExtra(AlarmClock.ExtraDays, );
-            //i.PutExtra(AlarmClock.ExtraMessage, "Good Morning");
-            //StartActivity(i);    
+                .CreateLoadView(Resource.Id.fragment_main_container, new SchedulerFragment());  
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -85,16 +71,13 @@ namespace MTS
                 var uri = (Android.Net.Uri)data.GetParcelableExtra(RingtoneManager.ExtraRingtonePickedUri);
                 if (uri != null)
                 {
-                    var ringTonePath = uri.Path;
-                    var ringtone = RingtoneManager.GetRingtone(this, uri);
-                    var title = ringtone.GetTitle(this);
-                    
-                    var values = new ContentValues();
-                    values.Put("ringtoneUri", "content://settings" + ringTonePath + " " + title);
-                    var sqLiteDbUtil = new SqLiteDBUtil(this);
-                    var mSharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
-                    var idRow = mSharedPref.GetInt("ITEM_ID", 0);
+                    string ringTonePath, title;
+                    SqLiteDBUtil sqLiteDbUtil;
+                    int idRow;
+                    GetRingtoneData(uri, out ringTonePath, out title, out sqLiteDbUtil, out idRow);
 
+                    var values = new ContentValues();
+                    values.Put("ringtoneUri", "content:" + ringTonePath + " " + title);
                     sqLiteDbUtil.UpdateRowAlarms(values, idRow.ToString());
                 }
             }
@@ -104,16 +87,13 @@ namespace MTS
                 var uri = (Android.Net.Uri)data.GetParcelableExtra(RingtoneManager.ExtraRingtonePickedUri);
                 if (uri != null)
                 {
-                    var ringTonePath = uri.Path;
-                    var ringtone = RingtoneManager.GetRingtone(this, uri);
-                    var title = ringtone.GetTitle(this);
+                    string ringTonePath, title;
+                    SqLiteDBUtil sqLiteDbUtil;
+                    int idRow;
+                    GetRingtoneData(uri, out ringTonePath, out title, out sqLiteDbUtil, out idRow);
 
                     var values = new ContentValues();
-                    values.Put("RingtoneUri", "content://settings" + ringTonePath + " " + title);
-                    var sqLiteDbUtil = new SqLiteDBUtil(this);
-                    var mSharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
-                    var idRow = mSharedPref.GetInt("ITEM_ID", 0);
-
+                    values.Put("RingtoneUri", "content:" + ringTonePath + " " + title);
                     sqLiteDbUtil.UpdateRowScheduler(values, idRow.ToString());
                 }
             }
@@ -149,6 +129,16 @@ namespace MTS
                         .CreateLoadView(Resource.Id.fragment_main_container, new AuthNewsFeedRepeatFragment());
                 }
             }
+        }
+
+        private void GetRingtoneData(Android.Net.Uri uri, out string ringTonePath, out string title, out SqLiteDBUtil sqLiteDbUtil, out int idRow)
+        {
+            ringTonePath = uri.EncodedSchemeSpecificPart;
+            var ringtone = RingtoneManager.GetRingtone(this, uri);
+            title = ringtone.GetTitle(this);
+            sqLiteDbUtil = new SqLiteDBUtil(this);
+            var mSharedPref = PreferenceManager.GetDefaultSharedPreferences(this);
+            idRow = mSharedPref.GetInt("ITEM_ID", 0);
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)
