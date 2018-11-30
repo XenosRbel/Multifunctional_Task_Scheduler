@@ -169,23 +169,21 @@ namespace MTS.Adapters
             _sqLiteDbUtil.UpdateRowScheduler(values,id.ToString());
 
             this.NotifyDataSetChanged();
-
-            var shedulerTask = new SchedulerReceiver();
-            TelephonyManager manager = (TelephonyManager)this._context.GetSystemService(Context.TelephonyService);
-
-            var tz = Java.Util.TimeZone.GetTimeZone("GMT+03:00");
-            var cal = Calendar.GetInstance(tz);
-            cal.TimeInMillis = Java.Lang.JavaSystem.CurrentTimeMillis();
-            cal.Set(selectedItem.Time.Year, selectedItem.Time.Month, selectedItem.Time.Day, selectedItem.Time.Hour, selectedItem.Time.Minute);
             
 
-            Calendar calendar = Calendar.GetInstance(tz);
-           // calendar.TimeInMillis = Java.Lang.JavaSystem.CurrentTimeMillis();
-            calendar.Add(CalendarField.Month, Math.Abs(selectedItem.Time.Month - DateTime.Today.Month));
-            calendar.Add(CalendarField.Hour, Math.Abs(selectedItem.Time.Hour - DateTime.Today.Hour));
-            calendar.Add(CalendarField.Minute, Math.Abs(selectedItem.Time.Minute - DateTime.Today.Minute));
-            calendar.Add(CalendarField.Second, 30);
-            calendar.Set(CalendarField.Millisecond, 0);
+            var tz = Java.Util.TimeZone.GetTimeZone("GMT+03:00");
+            var cals = Calendar.GetInstance(tz);
+            cals.Set(CalendarField.Year, selectedItem.Time.Year);
+            cals.Set(CalendarField.DayOfMonth, selectedItem.Time.Day);
+            cals.Set(CalendarField.Month, selectedItem.Time.Month - 1);
+            cals.Set(CalendarField.Hour, selectedItem.Time.Hour);
+            cals.Set(CalendarField.Minute, selectedItem.Time.Minute);
+            cals.Set(CalendarField.Second, 0);
+            cals.Set(CalendarField.Millisecond, 0);
+
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy MMMM dd HH:mm:ss"); 
+            string datFormat = dateFormat.Format(cals.Time);
 
             Intent intent = new Intent(this._context, typeof(SchedulerReceiver));
             intent.PutExtra("SchedulerDescription", selectedItem.SchedulerDescription);
@@ -194,16 +192,11 @@ namespace MTS.Adapters
             {
                 intent.PutExtra("RingtoneUri", selectedItem.RingtoneUri.Split(' ').ToArray()[0]);
             }
-
-            
             PendingIntent pi = PendingIntent.GetBroadcast(this._context, selectedItem.Id, intent, PendingIntentFlags.UpdateCurrent);
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("EE mm dd HH:mm:ss 'GMT'Z yyyy");
-            string a = dateFormat.Format(cal.Time);
-
             AlarmManager am = (AlarmManager)_context.GetSystemService(Context.AlarmService);
-            am.Set(AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + calendar.TimeInMillis, pi);
-            //shedulerTask.SetOnetimeTimer(this._context, selectedItem.Time.Ticks, selectedItem);
+            am.Set(AlarmType.RtcWakeup, cals.TimeInMillis, pi);
+
+            Toast.MakeText(_context, $"Задача создана на {datFormat}", ToastLength.Long).Show();
         }
 
         private void _ringtoneTextView_Click(object sender, EventArgs e)
